@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
-export default function App() {
+import { COINMARKETCAP_API } from 'react-native-dotenv';
+import store, { persistor } from './redux/store';
+import MainScreen from './screens/MainScreen';
+
+const App = () => {
+
+  console.log(COINMARKETCAP_API, 'sdfsdfasfd');
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Provider store={store}>
+      <PersistGate persistor={persistor} loading={null}>
+        <MainScreen/>
+      </PersistGate>
+    </Provider>
   );
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+};
+
+export default App;
