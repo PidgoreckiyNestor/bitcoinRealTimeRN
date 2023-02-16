@@ -1,8 +1,12 @@
-{
+module.exports = {
   "expo": {
     "name": "AwesomeProject",
     "slug": "AwesomeProject",
     "version": "1.0.0",
+    "extra": {
+      "COINMARKETCAP_API": process.env.COINMARKETCAP_API,
+      "COINMARKETCAP_KEY": process.env.COINMARKETCAP_KEY,
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",

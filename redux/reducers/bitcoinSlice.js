@@ -1,5 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import bitcoin from '../../services/bitcoin';
+import formatter from "../../utils/getCurrentTime";
 
 const initialState = {
   history: [],
@@ -11,10 +12,9 @@ const initialState = {
 
 export const getBitcoinLatest = createAsyncThunk(
   'bitcoin/getBitcoinLatest',
-  async (_,{ rejectWithValue }) => {
+  async (_, {rejectWithValue}) => {
     try {
-      const { data } = await bitcoin.getBitcoinLatest();
-      console.log({ data });
+      const {data} = await bitcoin.getBitcoinLatest();
       return data;
     } catch (error) {
       console.log(error);
@@ -29,7 +29,10 @@ const bitcoinSlice = createSlice({
   initialState,
   reducers: {
     nextPage(state) {
-      state.offset += state.limit;
+      if (state.data.length >= state.offset){
+        state.offset = state.offset + state.limit;
+
+      }
     },
     prevPage(state) {
       if (!(state.offset < state.limit)) {
@@ -39,25 +42,30 @@ const bitcoinSlice = createSlice({
     toggleFilter(state) {
       state.ascending = !state.ascending;
     },
+    changeIntervalOfUpdate(state, action) {
+      state.intervalOfSearch = action.payload
+    },
+    clearHistory(state) {
+      state.history = []
+      state.offset = 0
+    }
   },
   extraReducers: {
     [getBitcoinLatest.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [getBitcoinLatest.fulfilled]: (state, { payload }) => {
+    [getBitcoinLatest.fulfilled]: (state, {payload}) => {
       state.loading = false;
-      // state.count = payload.count;
-      // state.next = payload.next;
-      // state.previous = payload.previous;
-      // state.results = payload.results;
+      state.history = [...state.history, [formatter(new Date), payload.data['1'].quote.USD.price]];
       state.error = null;
     },
-    [getBitcoinLatest.rejected]: (state, { payload }) => {
+    [getBitcoinLatest.rejected]: (state) => {
       state.loading = false;
-      // state.error = payload.status;
     },
   },
 });
 
+
+export const {nextPage, prevPage, changeIntervalOfUpdate, clearHistory, toggleFilter} = bitcoinSlice.actions
 export default bitcoinSlice.reducer;

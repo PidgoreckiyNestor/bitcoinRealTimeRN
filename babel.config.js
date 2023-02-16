@@ -3,8 +3,7 @@ module.exports = function (api) {
   return {
     presets: [
       'babel-preset-expo',
-      'metro-react-native-babel-preset',
-      'react-native-dotenv'],
+    ],
     plugins: ['transform-inline-environment-variables'],
   };
 };
